@@ -1,0 +1,40 @@
+FROM ubuntu:jammy
+
+# built-in packages
+ENV DEBIAN_FRONTEND noninteractive
+RUN apt update \
+    && apt install -y \
+        supervisor sudo net-tools \
+        dbus-x11 x11-utils alsa-utils \
+        mesa-utils libgl1-mesa-dri \
+    && apt install -y \
+        xvfb x11vnc \
+    && apt install -y xfce4-session xfce4-goodies xfce4-panel
+
+RUN apt install -y tini
+
+RUN apt update \
+    && apt autoclean -y \
+    && apt autoremove -y \
+    && rm -rf /var/lib/apt/lists/*
+
+ADD ./xfce/startup.sh /
+ADD ./xfce/supervisord.conf /etc/supervisor/conf.d/
+ADD ./xfce/xvfb.sh /usr/local/bin/
+
+WORKDIR /root
+ENV SHELL=/bin/bash
+
+# Copy scripts
+COPY ./scripts /setup
+
+# SSH setup
+RUN chmod +x /setup/ssh-setup.sh && bash /setup/ssh-setup.sh
+
+# ROS 2 setup
+RUN chmod +x /setup/ros2-setup.sh && bash /setup/ros2-setup.sh
+
+COPY ./scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+ENTRYPOINT [ "bash", "/usr/local/bin/entrypoint.sh" ]
