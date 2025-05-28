@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Setting up environment
-export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true
-
 # Setting up locale
 sudo apt update && sudo apt install -y locales
 sudo locale-gen en_US en_US.UTF-8
@@ -20,7 +17,12 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-a
 
 # Installing ROS 2
 sudo apt update && sudo apt upgrade -y
-
 sudo apt install -y ros-humble-desktop ros-dev-tools
+
+# Install ros2_control
+sudo apt install -y ros-humble-ros2-control ros-humble-ros2-controllers
+
+# Source ROS 2
+echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
 
 # Done!

@@ -22,17 +22,24 @@ ADD ./xfce/startup.sh /
 ADD ./xfce/supervisord.conf /etc/supervisor/conf.d/
 ADD ./xfce/xvfb.sh /usr/local/bin/
 
-WORKDIR /root
+WORKDIR /workspace
 ENV SHELL=/bin/bash
 
 # Copy scripts
-COPY ./scripts /setup
+COPY ./scripts/*.sh /setup/
+COPY ./scripts/ros2/*.sh /setup/ros2/
 
 # SSH setup
 RUN chmod +x /setup/ssh-setup.sh && bash /setup/ssh-setup.sh
 
 # ROS 2 setup
-RUN chmod +x /setup/ros2-setup.sh && bash /setup/ros2-setup.sh
+RUN chmod +x /setup/ros2/ros2-setup.sh && bash /setup/ros2/ros2-setup.sh
+
+# Gazebo Harmonic setup
+# RUN chmod +x /setup/ros2/gazebo-harmonic-setup.sh && bash /setup/ros2/gazebo-harmonic-setup.sh
+
+# Or Gazebo Classic setup
+RUN chmod +x /setup/ros2/install_gazebo_classic.sh && bash /setup/ros2/install_gazebo_classic.sh
 
 COPY ./scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
