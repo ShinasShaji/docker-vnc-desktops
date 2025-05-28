@@ -1,0 +1,16 @@
+services:
+  argos3-dev-xfce:
+    build:
+      context: .
+      dockerfile: xfce/Dockerfile_jammy_argos3
+    ports:
+      - "5900:5900"  # VNC port
+      - "1111:22" # SSH port
+    environment:
+      - DISPLAY=:1
+      - RESOLUTION=1280x720  # You can adjust this resolution as needed
+    volumes:
+      - /dev/shm:/dev/shm  # Shared memory for better performance
+    restart: no
+    privileged: true  # Required for some X11 operations
+    shm_size: '2gb'  # Increased shared memory size for better performance 
